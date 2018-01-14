@@ -6,17 +6,16 @@ namespace Fb2Helper.Logic
 {
     public static class DataManager
     {
-        public static void Process(XDocument fb2)
+        public static void Process(this XDocument fb2)
         {
             OrderBinaries(fb2);
         }
 
         public static void OrderBinaries(XDocument fb2)
         {
-            List<XElement> orderedBinaries = fb2.Root?.Nodes().Cast<XElement>()
-                                                              .Where(x => x.IsBinary())
-                                                              .OrderBy(x => x.GetBinaryId())
-                                                              .ToList();
+            List<XElement> orderedBinaries = fb2.Root?.Elements().Where(x => x.IsBinary())
+                                                                 .OrderBy(x => x.GetBinaryId())
+                                                                 .ToList();
             if (orderedBinaries == null)
             {
                 return;

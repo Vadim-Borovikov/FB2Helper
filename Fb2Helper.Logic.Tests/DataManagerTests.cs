@@ -29,8 +29,7 @@ namespace Fb2Helper.Logic.Tests
                 yield break;
             }
 
-            foreach (XElement element in fb2.Root?.Nodes().Cast<XElement>()
-                                                          .Where(x => x.Name.LocalName == "binary"))
+            foreach (XElement element in fb2.Root?.Elements().Where(x => x.Name.LocalName == "binary"))
             {
                 yield return element.Attributes().FirstOrDefault(a => a.Name.LocalName == "id")?.Value;
             }

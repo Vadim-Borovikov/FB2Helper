@@ -28,7 +28,7 @@ namespace Fb2Helper
 
             XDocument fb2 = XDocument.Load(openFileDialog.FileName);
 
-            DataManager.Process(fb2);
+            fb2.Process();
 
             var saveFileDialog = new SaveFileDialog
             {
