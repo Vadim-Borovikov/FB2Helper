@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27004.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fb2Helper", "Fb2Helper\Fb2Helper.csproj", "{572FF4CF-934D-4CBF-A660-F57BD4F3A72A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fb2Helper.Logic", "Fb2Helper.Logic\Fb2Helper.Logic.csproj", "{CBE9FD9C-8193-4A04-A298-374706CC26CC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{572FF4CF-934D-4CBF-A660-F57BD4F3A72A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{572FF4CF-934D-4CBF-A660-F57BD4F3A72A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{572FF4CF-934D-4CBF-A660-F57BD4F3A72A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBE9FD9C-8193-4A04-A298-374706CC26CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBE9FD9C-8193-4A04-A298-374706CC26CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBE9FD9C-8193-4A04-A298-374706CC26CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBE9FD9C-8193-4A04-A298-374706CC26CC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,28 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Fb2Helper.Logic;
+using Microsoft.Win32;
 
 namespace Fb2Helper
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var openFileDialog = new OpenFileDialog
+            {
+                Filter = "FB2|*.fb2"
+            };
+            if (openFileDialog.ShowDialog() != true)
+            {
+                return;
+            }
+
+            string content = DataManager.Process(openFileDialog.FileName);
+
+            var saveFileDialog = new SaveFileDialog
+            {
+                Filter = "FB2|*.fb2"
+            };
+            if (saveFileDialog.ShowDialog() != true)
+            {
+                return;
+            }
+
+            DataManager.Save(saveFileDialog.FileName, content);
         }
     }
 }

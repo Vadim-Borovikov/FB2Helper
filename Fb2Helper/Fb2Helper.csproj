@@ -93,5 +93,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Fb2Helper.Logic\Fb2Helper.Logic.csproj">
+      <Project>{cbe9fd9c-8193-4a04-a298-374706cc26cc}</Project>
+      <Name>Fb2Helper.Logic</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
