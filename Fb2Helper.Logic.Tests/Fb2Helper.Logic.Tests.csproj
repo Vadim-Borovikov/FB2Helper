@@ -60,6 +60,7 @@
   <ItemGroup>
     <Compile Include="DataManagerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="XDocumentHelpersTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Fb2Helper.Logic\Fb2Helper.Logic.csproj">

@@ -13,26 +13,20 @@ namespace Fb2Helper.Logic.Tests
         {
             XDocument fb2 = XDocument.Load(InputPath);
 
-            List<string> ids = GetBinaryIds(fb2).ToList();
-            List<string> orderedIds = ids.OrderBy(x => x).ToList();
+            List<string> ids = GetBinaryIds(fb2);
+            List<string> orderedIds = ids?.OrderBy(x => x).ToList();
             CollectionAssert.AreNotEqual(ids, orderedIds);
 
             DataManager.OrderBinaries(fb2);
-            ids = GetBinaryIds(fb2).ToList();
+            ids = GetBinaryIds(fb2);
             CollectionAssert.AreEqual(ids, orderedIds);
         }
 
-        private static IEnumerable<string> GetBinaryIds(XDocument fb2)
+        private static List<string> GetBinaryIds(XDocument fb2)
         {
-            if (fb2.Root?.Nodes() == null)
-            {
-                yield break;
-            }
-
-            foreach (XElement element in fb2.Root?.Elements().Where(x => x.Name.LocalName == "binary"))
-            {
-                yield return element.Attributes().FirstOrDefault(a => a.Name.LocalName == "id")?.Value;
-            }
+            return fb2.Root?.ElementsByLocal("binary")
+                            .Select(e => e.AttributeByLocal("id").Value)
+                            .ToList();
         }
 
         private const string InputPath = @"D:\Test\fb2.fb2";

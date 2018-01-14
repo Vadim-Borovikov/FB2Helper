@@ -13,9 +13,9 @@ namespace Fb2Helper.Logic
 
         public static void OrderBinaries(XDocument fb2)
         {
-            List<XElement> orderedBinaries = fb2.Root?.Elements().Where(x => x.IsBinary())
-                                                                 .OrderBy(x => x.GetBinaryId())
-                                                                 .ToList();
+            List<XElement> orderedBinaries = fb2.Root?.ElementsByLocal("binary")
+                                                      .OrderBy(x => x.Attribute("id")?.Value)
+                                                      .ToList();
             if (orderedBinaries == null)
             {
                 return;
@@ -26,12 +26,6 @@ namespace Fb2Helper.Logic
                 binary.Remove();
                 fb2.Root?.Add(binary);
             }
-        }
-
-        private static bool IsBinary(this XElement element) { return element.Name.LocalName == "binary"; }
-        private static string GetBinaryId(this XElement element)
-        {
-            return element.Attributes().FirstOrDefault(a => a.Name.LocalName == "id")?.Value;
         }
     }
 }
