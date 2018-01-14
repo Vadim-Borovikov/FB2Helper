@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2010
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fb2Helper", "Fb2Helper\Fb2Helper.csproj", "{572FF4CF-934D-4CBF-A660-F57BD4F3A72A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{572FF4CF-934D-4CBF-A660-F57BD4F3A72A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{572FF4CF-934D-4CBF-A660-F57BD4F3A72A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{572FF4CF-934D-4CBF-A660-F57BD4F3A72A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{572FF4CF-934D-4CBF-A660-F57BD4F3A72A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5007CCAB-1CC2-4E84-A870-6CACDB84B911}
+	EndGlobalSection
+EndGlobal
