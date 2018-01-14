@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Fb2Helper.Logic.Tests
@@ -7,30 +9,33 @@ namespace Fb2Helper.Logic.Tests
     public class DataManagerTests
     {
         [TestMethod]
-        public void ProcessTest()
+        public void OrderBinariesTest()
         {
-            string content = DataManager.Process(InputPath);
-            Assert.IsNotNull(content);
-            Assert.AreNotEqual(0, content.Length);
+            XDocument fb2 = XDocument.Load(InputPath);
+
+            List<string> ids = GetBinaryIds(fb2).ToList();
+            List<string> orderedIds = ids.OrderBy(x => x).ToList();
+            CollectionAssert.AreNotEqual(ids, orderedIds);
+
+            DataManager.OrderBinaries(fb2);
+            ids = GetBinaryIds(fb2).ToList();
+            CollectionAssert.AreEqual(ids, orderedIds);
         }
 
-        [TestMethod]
-        public void SaveTest()
+        private static IEnumerable<string> GetBinaryIds(XDocument fb2)
         {
-            File.Delete(OutputPath);
+            if (fb2.Root?.Nodes() == null)
+            {
+                yield break;
+            }
 
-            string content = DataManager.Process(InputPath);
-
-            Assert.IsFalse(File.Exists(OutputPath));
-
-            DataManager.Save(OutputPath, content);
-            Assert.IsTrue(File.Exists(OutputPath));
-            content = File.ReadAllText(OutputPath);
-            Assert.IsNotNull(content);
-            Assert.AreNotEqual(0, content.Length);
+            foreach (XElement element in fb2.Root?.Nodes().Cast<XElement>()
+                                                          .Where(x => x.Name.LocalName == "binary"))
+            {
+                yield return element.Attributes().FirstOrDefault(a => a.Name.LocalName == "id")?.Value;
+            }
         }
 
         private const string InputPath = @"D:\Test\fb2.fb2";
-        private const string OutputPath = @"D:\Test\fb2.result.fb2";
     }
 }

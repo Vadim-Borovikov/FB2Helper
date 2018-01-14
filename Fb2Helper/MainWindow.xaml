@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Fb2Helper"
         mc:Ignorable="d"
-        Title="FB2 Helper" Height="100" Width="200" MinWidth="200" MaxWidth="200" MinHeight="100" MaxHeight="100">
+        Title="FB2 Helper" Height="100" Width="200" MinWidth="200" MaxWidth="200" MinHeight="100" MaxHeight="100"
+        x:ClassModifier="internal">
     <Grid>
         <Button Content="Загрузить FB2" Height="22" VerticalAlignment="Center" HorizontalAlignment="Center" Width="84" Click="Button_Click"/>
     </Grid>

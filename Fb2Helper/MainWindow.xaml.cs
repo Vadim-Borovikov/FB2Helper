@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows;
+﻿using System.Windows;
+using System.Xml.Linq;
 using Fb2Helper.Logic;
 using Microsoft.Win32;
 
@@ -9,7 +8,7 @@ namespace Fb2Helper
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow
+    internal partial class MainWindow
     {
         public MainWindow()
         {
@@ -27,7 +26,9 @@ namespace Fb2Helper
                 return;
             }
 
-            string content = DataManager.Process(openFileDialog.FileName);
+            XDocument fb2 = XDocument.Load(openFileDialog.FileName);
+
+            DataManager.Process(fb2);
 
             var saveFileDialog = new SaveFileDialog
             {
@@ -38,7 +39,7 @@ namespace Fb2Helper
                 return;
             }
 
-            DataManager.Save(saveFileDialog.FileName, content);
+            fb2.Save(saveFileDialog.FileName);
         }
     }
 }
