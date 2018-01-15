@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Xml.Linq;
 
 namespace Fb2Helper.Logic
@@ -52,6 +53,10 @@ namespace Fb2Helper.Logic
         public static void Process(this XDocument fb2, BookDescription description)
         {
             fb2.SetDescription(description);
+            fb2.FixDashes();
+            fb2.FixDialogs();
+            fb2.FixDots();
+            fb2.FixQuotes();
             fb2.OrderBinaries();
         }
 
@@ -75,6 +80,84 @@ namespace Fb2Helper.Logic
             XElement dateElement = documentElement.ElementByLocal("date");
             dateElement.AttributeByLocal("value").Value = description.Date.ToString("yyyy-MM-dd");
             dateElement.Value = description.Date.ToString("D");
+        }
+
+        public static void FixDashes(this XDocument fb2)
+        {
+            fb2.Root?.ElementByLocal("body").ReplaceRecurcively(" - ", " – ");
+        }
+
+        public static void FixDialogs(this XDocument fb2)
+        {
+            fb2.Root?.ElementByLocal("body").ReplaceRecurcively("- ", "— ");
+        }
+
+        public static void FixDots(this XDocument fb2)
+        {
+            fb2.Root?.ElementByLocal("body").ReplaceRecurcively("...", "…");
+        }
+
+        public static void FixQuotes(this XDocument fb2)
+        {
+            bool shouldOpenQuote = true;
+            XElement bodyElement = fb2.Root?.ElementByLocal("body");
+            if (bodyElement == null)
+            {
+                return;
+            }
+
+            int quotes = bodyElement.Value.Count(c => c == '\"');
+            if ((quotes % 2) != 0)
+            {
+                throw new Exception("Odd number of quotes! Check your source!");
+            }
+            bodyElement.FixQuotesRecurcively(ref shouldOpenQuote);
+        }
+
+        private static void ReplaceRecurcively(this XContainer container, string oldValue, string newValue)
+        {
+            container.ConvertRecurcively(s => s.Replace(oldValue, newValue));
+        }
+        private static void ConvertRecurcively(this XContainer container, Func<string, string> convert)
+        {
+            foreach (XNode node in container.Nodes())
+            {
+                switch (node)
+                {
+                    case XText text:
+                        text.Value = convert(text.Value);
+                        break;
+                    case XElement xElement:
+                        xElement.ConvertRecurcively(convert);
+                        break;
+                }
+            }
+        }
+
+        private static void FixQuotesRecurcively(this XContainer container, ref bool shouldOpenQuote)
+        {
+            foreach (XNode node in container.Nodes())
+            {
+                switch (node)
+                {
+                    case XText text:
+                        var sb = new StringBuilder(text.Value);
+                        for (int i = 0; i < sb.Length; ++i)
+                        {
+                            if (sb[i] != '\"')
+                            {
+                                continue;
+                            }
+                            sb[i] = shouldOpenQuote ? '«' : '»';
+                            text.Value = sb.ToString();
+                            shouldOpenQuote = !shouldOpenQuote;
+                        }
+                        break;
+                    case XElement xElement:
+                        xElement.FixQuotesRecurcively(ref shouldOpenQuote);
+                        break;
+                }
+            }
         }
 
         public static void OrderBinaries(this XDocument fb2)

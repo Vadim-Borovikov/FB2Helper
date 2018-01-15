@@ -62,6 +62,46 @@ namespace Fb2Helper.Logic.Tests
         }
 
         [TestMethod]
+        public void FixDashesTest()
+        {
+            TestReplace(DataManager.FixDashes, " - ", " – ");
+        }
+
+        [TestMethod]
+        public void FixDialogsTest()
+        {
+            TestReplace(DataManager.FixDialogs, "- ", "— ");
+        }
+
+        [TestMethod]
+        public void FixDotsTest()
+        {
+            TestReplace(DataManager.FixDots, "...", "…");
+        }
+
+        [TestMethod]
+        public void FixQuotesTest()
+        {
+            XDocument fb2 = XDocument.Load(InputPath);
+            XElement bodyElement = fb2.Root?.ElementByLocal("body");
+            Assert.IsNotNull(bodyElement);
+            string text = bodyElement.Value;
+
+            int oldIndexLeft = text.IndexOf("\"", StringComparison.Ordinal);
+            Assert.AreNotEqual(-1, oldIndexLeft);
+            int oldIndexRight = text.LastIndexOf("\"", StringComparison.Ordinal);
+            Assert.AreNotEqual(-1, oldIndexRight);
+            Assert.AreNotEqual(oldIndexLeft, oldIndexRight);
+
+            fb2.FixQuotes();
+            text = bodyElement.Value;
+
+            Assert.IsFalse(text.Contains("\""));
+            Assert.AreEqual('«', text[oldIndexLeft]);
+            Assert.AreEqual('»', text[oldIndexRight]);
+        }
+
+        [TestMethod]
         public void OrderBinariesTest()
         {
             XDocument fb2 = XDocument.Load(InputPath);
@@ -73,6 +113,28 @@ namespace Fb2Helper.Logic.Tests
             fb2.OrderBinaries();
             ids = GetBinaryIds(fb2);
             CollectionAssert.AreEqual(orderedIds, ids);
+        }
+
+        private static void TestReplace(Action<XDocument> replacer, string oldValue, string newValue)
+        {
+            XDocument fb2 = XDocument.Load(InputPath);
+            XElement bodyElement = fb2.Root?.ElementByLocal("body");
+            Assert.IsNotNull(bodyElement);
+            string text = bodyElement.ToString();
+            text = text.Replace(newValue, oldValue);
+
+            int oldIndex = text.IndexOf(oldValue, StringComparison.Ordinal);
+            Assert.AreNotEqual(-1, oldIndex);
+            int newIndex = text.IndexOf(newValue, StringComparison.Ordinal);
+            Assert.AreEqual(-1, newIndex);
+
+            replacer(fb2);
+            text = bodyElement.ToString();
+
+            int index = text.IndexOf(oldValue, StringComparison.Ordinal);
+            Assert.AreEqual(-1, index);
+            newIndex = text.IndexOf(newValue, StringComparison.Ordinal);
+            Assert.AreEqual(oldIndex, newIndex);
         }
 
         private static List<string> GetBinaryIds(XDocument fb2)
