@@ -15,7 +15,7 @@ namespace Fb2Helper
             InitializeComponent();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void ButtonLoad_Click(object sender, RoutedEventArgs e)
         {
             var openFileDialog = new OpenFileDialog
             {
@@ -26,9 +26,21 @@ namespace Fb2Helper
                 return;
             }
 
-            XDocument fb2 = XDocument.Load(openFileDialog.FileName);
+            _fb2 = XDocument.Load(openFileDialog.FileName);
+            _description = _fb2.GetDescription();
 
-            fb2.Process();
+            BookAuthorFirstName.Text = _description.BookAuthorFirstName;
+            BookAuthorFamilyName.Text = _description.BookAuthorFamilyName;
+            BookTitle.Text = _description.Title;
+            FileAuthorFirstName.Text = _description.FileAuthorFirstName;
+            FileAuthorFamilyName.Text = _description.FileAuthorFamilyName;
+        }
+
+        private void ButtonSave_Click(object sender, RoutedEventArgs e)
+        {
+            _description.Fill(BookAuthorFirstName.Text, BookAuthorFamilyName.Text, BookTitle.Text,
+                              FileAuthorFirstName.Text, FileAuthorFamilyName.Text, Title);
+            _fb2.Process(_description);
 
             var saveFileDialog = new SaveFileDialog
             {
@@ -39,7 +51,10 @@ namespace Fb2Helper
                 return;
             }
 
-            fb2.Save(saveFileDialog.FileName);
+            _fb2.Save(saveFileDialog.FileName);
         }
+
+        private XDocument _fb2;
+        private BookDescription _description;
     }
 }

@@ -3,11 +3,28 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Fb2Helper"
         mc:Ignorable="d"
-        Title="FB2 Helper" Height="100" Width="200" MinWidth="200" MaxWidth="200" MinHeight="100" MaxHeight="100"
-        x:ClassModifier="internal">
+        Title="FB2 Helper" Height="60" Width="259" x:ClassModifier="internal" MinWidth="509" MinHeight="221">
     <Grid>
-        <Button Content="Загрузить FB2" Height="22" VerticalAlignment="Center" HorizontalAlignment="Center" Width="84" Click="Button_Click"/>
+        <Button Content="Загрузить FB2" HorizontalAlignment="Left" Width="84" Click="ButtonLoad_Click" Margin="10,0,0,10" Height="22" VerticalAlignment="Bottom"/>
+        <GroupBox Header="Книга" HorizontalAlignment="Left" Margin="10,10,0,37" Width="238" RenderTransformOrigin="0.443,0.465">
+            <Grid Margin="0,0,0,0">
+                <Label Content="Имя автора" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+                <TextBox Name="BookAuthorFirstName" Height="24" Margin="115,12,10,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top"/>
+                <Label Content="Фамилия автора" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top"/>
+                <TextBox Name="BookAuthorFamilyName" Height="24" Margin="115,43,10,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top"/>
+                <Label Content="Название" HorizontalAlignment="Left" Margin="10,86,0,0" VerticalAlignment="Top"/>
+                <TextBox Name="BookTitle" Height="24" Margin="78,88,10,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top"/>
+            </Grid>
+        </GroupBox>
+        <GroupBox Header="Файл" Height="98" Margin="253,10,10,0" VerticalAlignment="Top" RenderTransformOrigin="0.443,0.465">
+            <Grid Margin="0,0,0,0">
+                <Label Content="Имя автора" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+                <TextBox Name="FileAuthorFirstName" Height="24" Margin="115,12,10,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top"/>
+                <Label Content="Фамилия автора" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top"/>
+                <TextBox Name="FileAuthorFamilyName" Height="24" Margin="115,43,10,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top"/>
+            </Grid>
+        </GroupBox>
+        <Button Content="Сохранить FB2" Click="ButtonSave_Click" Margin="0,0,10,10" Height="22" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="90"/>
     </Grid>
 </Window>
