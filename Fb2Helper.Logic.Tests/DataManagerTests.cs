@@ -64,13 +64,7 @@ namespace Fb2Helper.Logic.Tests
         [TestMethod]
         public void FixDashesTest()
         {
-            TestReplace(DataManager.FixDashes, " - ", " – ");
-        }
-
-        [TestMethod]
-        public void FixDialogsTest()
-        {
-            TestReplace(DataManager.FixDialogs, "- ", "— ");
+            TestReplace(DataManager.FixDashes, "- ", "— ");
         }
 
         [TestMethod]

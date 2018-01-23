@@ -54,7 +54,6 @@ namespace Fb2Helper.Logic
         {
             fb2.SetDescription(description);
             fb2.FixDashes();
-            fb2.FixDialogs();
             fb2.FixDots();
             fb2.FixQuotes();
             fb2.OrderBinaries();
