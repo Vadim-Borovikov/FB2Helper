@@ -83,12 +83,8 @@ namespace Fb2Helper.Logic
 
         public static void FixDashes(this XDocument fb2)
         {
-            fb2.Root?.ElementByLocal("body").ReplaceRecurcively(" - ", " – ");
-        }
-
-        public static void FixDialogs(this XDocument fb2)
-        {
             fb2.Root?.ElementByLocal("body").ReplaceRecurcively("- ", "— ");
+            fb2.Root?.ElementByLocal("body").ReplaceRecurcively("– ", "— ");
         }
 
         public static void FixDots(this XDocument fb2)

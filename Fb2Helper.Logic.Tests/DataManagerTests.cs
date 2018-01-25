@@ -64,7 +64,7 @@ namespace Fb2Helper.Logic.Tests
         [TestMethod]
         public void FixDashesTest()
         {
-            TestReplace(DataManager.FixDashes, "- ", "— ");
+            TestReplace(DataManager.FixDashes, new[] { "- ", "– " }, "— ");
         }
 
         [TestMethod]
@@ -111,24 +111,37 @@ namespace Fb2Helper.Logic.Tests
 
         private static void TestReplace(Action<XDocument> replacer, string oldValue, string newValue)
         {
+            TestReplace(replacer, new[] { oldValue }, newValue);
+        }
+
+        private static void TestReplace(Action<XDocument> replacer, string[] oldValues, string newValue)
+        {
             XDocument fb2 = XDocument.Load(InputPath);
             XElement bodyElement = fb2.Root?.ElementByLocal("body");
             Assert.IsNotNull(bodyElement);
             string text = bodyElement.ToString();
-            text = text.Replace(newValue, oldValue);
+            text = text.Replace(newValue, oldValues.First());
 
-            int oldIndex = text.IndexOf(oldValue, StringComparison.Ordinal);
-            Assert.AreNotEqual(-1, oldIndex);
+            HashSet<int> oldIndexes = GetMatchingIndexes(text, oldValues);
+            Assert.AreNotEqual(0, oldIndexes.Count);
+            int minOldIndex = oldIndexes.Min();
             int newIndex = text.IndexOf(newValue, StringComparison.Ordinal);
             Assert.AreEqual(-1, newIndex);
 
             replacer(fb2);
             text = bodyElement.ToString();
+            oldIndexes = GetMatchingIndexes(text, oldValues);
+            Assert.AreEqual(0, oldIndexes.Count);
 
-            int index = text.IndexOf(oldValue, StringComparison.Ordinal);
-            Assert.AreEqual(-1, index);
             newIndex = text.IndexOf(newValue, StringComparison.Ordinal);
-            Assert.AreEqual(oldIndex, newIndex);
+            Assert.AreEqual(minOldIndex, newIndex);
+        }
+
+        private static HashSet<int> GetMatchingIndexes(string text, IEnumerable<string> values)
+        {
+            IEnumerable<int> indexes = values.Select(ov => text.IndexOf(ov, StringComparison.Ordinal))
+                                             .Where(i => i != -1);
+            return new HashSet<int>(indexes);
         }
 
         private static List<string> GetBinaryIds(XDocument fb2)
