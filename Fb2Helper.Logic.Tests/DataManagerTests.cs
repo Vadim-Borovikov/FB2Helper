@@ -96,6 +96,12 @@ namespace Fb2Helper.Logic.Tests
         }
 
         [TestMethod]
+        public void FixSymbolsTest()
+        {
+            TestRemove(DataManager.FixSymbols, new[] { '\u2028', '\u0306' });
+        }
+
+        [TestMethod]
         public void SplitToSectionsByNamesTest()
         {
             XDocument fb2 = XDocument.Load(InputPath);
@@ -110,7 +116,7 @@ namespace Fb2Helper.Logic.Tests
             int newSectionsAmount = bodyElement.DescendantsByLocal("section").Count();
             fb2.Save(OutputPath);
             Assert.IsTrue(newSectionsAmount >= (oldSectionsAmount + pseAmount));
-            Assert.IsTrue(newSectionsAmount <= (2*oldSectionsAmount + pseAmount));
+            Assert.IsTrue(newSectionsAmount <= (2 * oldSectionsAmount + pseAmount));
         }
 
         [TestMethod]
@@ -155,9 +161,32 @@ namespace Fb2Helper.Logic.Tests
             Assert.AreEqual(minOldIndex, newIndex);
         }
 
+        private static void TestRemove(Action<XDocument> remover, char[] chars)
+        {
+            XDocument fb2 = XDocument.Load(InputPath);
+            XElement bodyElement = fb2.Root?.ElementByLocal("body");
+            Assert.IsNotNull(bodyElement);
+            string text = bodyElement.ToString();
+
+            HashSet<int> oldIndexes = GetMatchingIndexes(text, chars);
+            Assert.AreNotEqual(0, oldIndexes.Count);
+
+            remover(fb2);
+            text = bodyElement.ToString();
+            oldIndexes = GetMatchingIndexes(text, chars);
+            Assert.AreEqual(0, oldIndexes.Count);
+        }
+
         private static HashSet<int> GetMatchingIndexes(string text, IEnumerable<string> values)
         {
             IEnumerable<int> indexes = values.Select(ov => text.IndexOf(ov, StringComparison.Ordinal))
+                                             .Where(i => i != -1);
+            return new HashSet<int>(indexes);
+        }
+
+        private static HashSet<int> GetMatchingIndexes(string text, IEnumerable<char> values)
+        {
+            IEnumerable<int> indexes = values.Select(ov => text.IndexOf(ov))
                                              .Where(i => i != -1);
             return new HashSet<int>(indexes);
         }

@@ -57,6 +57,7 @@ namespace Fb2Helper.Logic
             fb2.FixDashes();
             fb2.FixDots();
             fb2.FixQuotes();
+            fb2.FixSymbols();
 
             var newSectionNames = new List<string> { "p", "strong", "emphasis" };
             var titleNames = new List<string> { "title", "p" };
@@ -95,6 +96,20 @@ namespace Fb2Helper.Logic
         public static void FixDots(this XDocument fb2)
         {
             fb2.Root?.ElementByLocal("body").ReplaceRecurcively("...", "…");
+        }
+
+        public static void FixSymbols(this XDocument fb2)
+        {
+            fb2.Root?.ElementByLocal("body").ReplaceRecurcively('\u2028'.ToString(), " ");
+
+            const char Breve = '\u0306';
+
+            string shortIDirt = new string(new[] { 'и', Breve });
+            fb2.Root?.ElementByLocal("body").ReplaceRecurcively(shortIDirt, "й");
+            string shortIDirtCapital = new string(new[] { 'И', Breve });
+            fb2.Root?.ElementByLocal("body").ReplaceRecurcively(shortIDirtCapital, "Й");
+
+            fb2.Root?.ElementByLocal("body").ReplaceRecurcively(Breve.ToString(), "");
         }
 
         public static void FixQuotes(this XDocument fb2)
