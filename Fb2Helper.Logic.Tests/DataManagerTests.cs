@@ -96,6 +96,24 @@ namespace Fb2Helper.Logic.Tests
         }
 
         [TestMethod]
+        public void SplitToSectionsByNamesTest()
+        {
+            XDocument fb2 = XDocument.Load(InputPath);
+            XElement bodyElement = fb2.Root?.ElementByLocal("body");
+            Assert.IsNotNull(bodyElement);
+            int oldSectionsAmount = bodyElement.DescendantsByLocal("section").Count();
+            var newSectionNames = new List<string> { "p", "strong", "emphasis" };
+            int pseAmount = bodyElement.ElementsByLocal("section").Sum(s => s.FindElementSequences(newSectionNames).Count());
+
+            var titleNames = new List<string> { "title", "p" };
+            fb2.SplitToSectionsByElementsNames(newSectionNames, titleNames);
+            int newSectionsAmount = bodyElement.DescendantsByLocal("section").Count();
+            fb2.Save(OutputPath);
+            Assert.IsTrue(newSectionsAmount >= (oldSectionsAmount + pseAmount));
+            Assert.IsTrue(newSectionsAmount <= (2*oldSectionsAmount + pseAmount));
+        }
+
+        [TestMethod]
         public void OrderBinariesTest()
         {
             XDocument fb2 = XDocument.Load(InputPath);
@@ -152,8 +170,9 @@ namespace Fb2Helper.Logic.Tests
         }
 
         private const string InputPath = @"D:\Test\fb2.fb2";
+        private const string OutputPath = @"D:\Test\fb2.result.fb2";
 
-        private const string BookAuthorFirstNameInitial = "1";
+        private const string BookAuthorFirstNameInitial = "";
         private const string BookAuthorFamilyNameInitial = "Unknown";
         private const string TitleInitial = "Unknown";
         private const string FileAuthorFirstNameInitial = "";

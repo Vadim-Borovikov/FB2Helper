@@ -53,12 +53,17 @@ namespace Fb2Helper.Logic
         public static void Process(this XDocument fb2, BookDescription description)
         {
             fb2.SetDescription(description);
+
             fb2.FixDashes();
             fb2.FixDots();
             fb2.FixQuotes();
+
+            var newSectionNames = new List<string> { "p", "strong", "emphasis" };
+            var titleNames = new List<string> { "title", "p" };
+            fb2.SplitToSectionsByElementsNames(newSectionNames, titleNames);
+
             fb2.OrderBinaries();
         }
-
         public static void SetDescription(this XDocument fb2, BookDescription description)
         {
             XElement descriptionElement = fb2.Root?.ElementByLocal("description");
@@ -107,6 +112,125 @@ namespace Fb2Helper.Logic
                 throw new Exception("Odd number of quotes! Check your source!");
             }
             bodyElement.FixQuotesRecurcively(ref shouldOpenQuote);
+        }
+
+        public static void SplitToSectionsByElementsNames(this XDocument fb2, List<string> newSectionNames,
+                                                          List<string> titleNames)
+        {
+            XElement bodyElement = fb2.Root?.ElementByLocal("body");
+            if (bodyElement == null)
+            {
+                return;
+            }
+
+            foreach (XElement section in bodyElement.ElementsByLocal("section").ToList())
+            {
+                SplitSectionByElementsNames(section, newSectionNames, titleNames);
+            }
+        }
+
+        private static XElement CreateSection(XText title, IReadOnlyCollection<XElement> body, string namespaceName)
+        {
+            if ((title == null) && (body.Count == 0))
+            {
+                return null;
+            }
+
+            XElement section = XDocumentHelpers.CreateElement("section", namespaceName);
+
+            if (title != null)
+            {
+                XElement titleElement = CreateTitle(title, namespaceName);
+                section.Add(titleElement);
+            }
+
+            if (body.Count == 0)
+            {
+                XElement emptyLine = XDocumentHelpers.CreateElement("empty-line", namespaceName);
+                section.Add(emptyLine);
+            }
+            else
+            {
+                section.Add(body);
+            }
+
+            return section;
+        }
+
+        private static XElement CreateTitle(XText title, string namespaceName)
+        {
+            XElement p = XDocumentHelpers.CreateElement("p", namespaceName, title);
+            return XDocumentHelpers.CreateElement("title", namespaceName, p);
+        }
+
+        private static XElement UniteSections(XText title, IEnumerable<XElement> sections, string namespaceName)
+        {
+            XElement result;
+
+            List<XElement> actualSections = sections.Where(s => s != null).ToList();
+            switch (actualSections.Count)
+            {
+                case 0:
+                    throw new ArgumentOutOfRangeException($"Amount of {nameof(sections)}", 0,
+                                                          "Some sections expected.");
+                case 1:
+                    result = actualSections.Single();
+                    break;
+                default:
+                    result = XDocumentHelpers.CreateElement("section", namespaceName);
+                    foreach (XElement currentSection in actualSections)
+                    {
+                        result.Add(currentSection);
+                    }
+                    break;
+            }
+
+            if (title != null)
+            {
+                XElement titleElement = CreateTitle(title, namespaceName);
+                result.AddFirst(titleElement);
+            }
+            return result;
+        }
+
+        private static void SplitSectionByElementsNames(XElement section, List<string> newSectionNames,
+                                                        List<string> titleNames)
+        {
+            var sections = new List<XElement>();
+            XText currentTitle = null;
+            var currentBody = new List<XElement>();
+
+            List<XElement> elements = section.Elements().ToList();
+            XText title = elements.FirstOrDefault()?.GetSequenceChild(titleNames);
+            if (title != null)
+            {
+                elements.RemoveAt(0);
+            }
+
+            XElement newSection;
+            foreach (XElement element in elements)
+            {
+                XText text = element.GetSequenceChild(newSectionNames);
+
+                if (text != null)
+                {
+                    newSection = CreateSection(currentTitle, currentBody, section.Name.NamespaceName);
+                    sections.Add(newSection);
+                    currentTitle = text;
+                    currentBody.Clear();
+                }
+                else
+                {
+                    currentBody.Add(element);
+                }
+            }
+            newSection = CreateSection(currentTitle, currentBody, section.Name.NamespaceName);
+            sections.Add(newSection);
+
+            newSection = UniteSections(title, sections, section.Name.NamespaceName);
+
+            section.AddBeforeSelf(newSection);
+            section.Remove();
         }
 
         private static void ReplaceRecurcively(this XContainer container, string oldValue, string newValue)
